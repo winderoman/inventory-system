@@ -68,7 +68,7 @@ class BrandResource extends Resource
                             ->default(true)
                             ->required(),
                     ])->columnSpan(['lg' => 1]),
-                ])    
+                ])
             ])->columns(3);
     }
 
@@ -103,7 +103,19 @@ class BrandResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ActionGroup::make([
+                        Tables\Actions\ViewAction::make(),
+                        Tables\Actions\EditAction::make(),
+                        Tables\Actions\ReplicateAction::make()
+                            ->label('Duplicate')
+                            ->beforeReplicaSaved(function (Brand $replica): void {
+                                $replica->name = $replica->name . ' copy';
+                                $replica->slug = $replica->slug . '-copy';
+                            }),
+                    ])->dropdown(false),
+                    Tables\Actions\DeleteAction::make(),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
