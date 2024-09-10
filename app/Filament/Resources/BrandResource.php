@@ -14,7 +14,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
-
+use Filament\Forms\Components\Section;
+use Filament\Tables\Columns\ColorColumn;
+use Filament\Support\Enums\Alignment;
 class BrandResource extends Resource
 {
     protected static ?string $model = Brand::class;
@@ -28,27 +30,46 @@ class BrandResource extends Resource
         return $form
             ->schema([
 
-                // Forms\Components\Split::make([
+                Forms\Components\Group::make()
+                    ->schema([
+                        Section::make()
+                        ->schema([
+                            Forms\Components\TextInput::make('name')
+                                ->required()
+                                ->unique(ignoreRecord: true)
+                                ->live(debounce: 500)
+                                ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))
+                                ->maxLength(255),
+                            Forms\Components\TextInput::make('slug')
+                                ->required()
+                                ->disabled()
+                                ->unique(ignoreRecord: true)
+                                ->dehydrated()
+                                ->maxLength(255),
+                            Forms\Components\TextInput::make('url')
+                                ->label('Website URL')
+                                ->unique(ignoreRecord: true)
+                                ->columnSpan('full')
+                                ->maxLength(255),
+                            Forms\Components\MarkdownEditor::make('description')
+                                ->columnSpan('full')
+                                ->maxLength(255),
+                        ])->columns(2),
+                    ])->columnSpan(['lg' =>  2]),
 
-                // ])
 
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('slug')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('url')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('description')
-                    ->maxLength(255),
-
-
-                Forms\Components\TextInput::make('primary_hex')
-                    ->maxLength(255),
-                Forms\Components\Toggle::make('is_visible')
-                    ->required(),
-            ]);
+                Forms\Components\Group::make()
+                ->schema([
+                    Section::make()
+                    ->schema([
+                        Forms\Components\ColorPicker::make('primary_hex')
+                        ->label('Primary Color'),
+                        Forms\Components\Toggle::make('is_visible')
+                            ->default(true)
+                            ->required(),
+                    ])->columnSpan(['lg' => 1]),
+                ])    
+            ])->columns(3);
     }
 
     public static function table(Table $table): Table
@@ -61,9 +82,11 @@ class BrandResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('url')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('primary_hex')
+                ColorColumn::make('primary_hex')
+                    ->alignment(Alignment::Center)
                     ->searchable(),
                 Tables\Columns\IconColumn::make('is_visible')
+                    ->alignment(Alignment::Center)
                     ->boolean(),
                 Tables\Columns\TextColumn::make('description')
                     ->searchable(),
