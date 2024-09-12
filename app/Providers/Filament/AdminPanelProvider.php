@@ -60,5 +60,10 @@ class AdminPanelProvider extends PanelProvider
                 \Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin::make(),
                 \pxlrbt\FilamentSpotlight\SpotlightPlugin::make()
             ]);
+            // ->navigationGroups([ // order of groups
+            //     'Shop',
+            //     'Roles and Permissions',
+            //     'External Links',
+            // ]);
     }
 }
