@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Models\Product;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -43,21 +44,15 @@ class ProductResource extends Resource
                         ->maxLength(255),
                     Forms\Components\MarkdownEditor::make('description')
                         ->columnSpanFull(),
-                ])->columns(2)
-            ]),
 
 
-
-                Forms\Components\Select::make('brand_id')
-                    ->relationship('brand', 'name')
-                    ->required(),
-                Forms\Components\TextInput::make('sku')
+                        Forms\Components\TextInput::make('sku')
                     ->label('SKU')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\FileUpload::make('image_url')
                     ->image(),
-                
+
                 Forms\Components\TextInput::make('quantity')
                     ->required()
                     ->numeric()
@@ -66,15 +61,40 @@ class ProductResource extends Resource
                     ->required()
                     ->numeric()
                     ->prefix('$'),
-                Forms\Components\Toggle::make('is_visible')
-                    ->required(),
+
                 Forms\Components\Toggle::make('is_featured')
                     ->required(),
                 Forms\Components\TextInput::make('type')
                     ->required()
                     ->maxLength(255)
                     ->default('deliverable'),
-                Forms\Components\DatePicker::make('published_at'),
+                ])->columns(2)
+            ]),
+
+            Forms\Components\Group::make()->schema([
+                Forms\Components\Section::make('Status')->schema([
+                    Forms\Components\Toggle::make('is_visible')
+                        ->default(true)
+                        ->required(),
+                    Forms\Components\DatePicker::make('published_at')
+                        ->label('Availability')
+                        ->default(Carbon::now()),
+                    Forms\Components\Section::make('Associations')->schema([
+                        Forms\Components\Select::make('brand_id')
+                            ->relationship('brand', 'name')
+                            ->native(false)
+                            ->required(),
+                    ])
+                ])->columns(1)
+            ]),
+
+            // Forms\Components\Group::make()->schema([
+            // ]),
+
+
+
+
+
             ]);
     }
 
