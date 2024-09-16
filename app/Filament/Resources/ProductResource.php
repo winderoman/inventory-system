@@ -118,11 +118,12 @@ class ProductResource extends Resource
 
                     Forms\Components\Section::make("Image")->schema([
                         Forms\Components\FileUpload::make('image_url')
-                            ->disk('sb')
-                            ->directory(config('filesystems.disks.sb.'))
+                            ->disk('supabase')
+                            // ->directory('productImg')
+                            // ->preserveFilenames()
                             ->image()
                             ->imageEditor()
-                            ->storeFileNamesIn('original_image_name')
+                            // ->storeFileNamesIn('original_image_name')
                             ->imageCropAspectRatio(null)
                             ->required(),
                     ])->collapsible(),
@@ -209,6 +210,7 @@ class ProductResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

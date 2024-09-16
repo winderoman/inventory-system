@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('FILESYSTEM_DISK', 'local'),
+    'default' => env('FILESYSTEM_DISK', 'sb'),
 
     /*
     |--------------------------------------------------------------------------
@@ -62,13 +62,36 @@ return [
             'secret' => env('SB_SECRET_ACCESS_KEY'),
             'region' => env('SB_DEFAULT_REGION'),
             'bucket' => env('SB_BUCKET'),
-            'url' => env('SB_URL'),
+            'url' => null,
             'endpoint' => env('SB_ENDPOINT'),
-            'directory' => env('SB_DIRECTORY'),
             'use_path_style_endpoint' => env('SB_USE_PATH_STYLE_ENDPOINT', true),
             'throw' => false,
-            'bucket_endpoint'=> true,
-            'visibility'=> 'public',
+            'bucket_endpoint' => true,
+            'visibility' => 'public',
+
+            'defaultUrlGenerationOptions' => [
+                'download'  => false,
+                'transform' => [],
+            ],
+        ],
+
+        'supabase' => [
+            'driver' => 'supabase',
+            'key'    => env('SUPABASE_STORAGE_KEY'), // Use a privileged key; read-only does not work
+            'bucket' => env('SUPABASE_STORAGE_BUCKET'),
+            'endpoint' => env('SUPABASE_STORAGE_ENDPOINT'),
+
+            'url'      => null, // <- Automatically generated; change here if you are using a proxy
+
+            'public'                      => true,  // Default to true
+            'defaultUrlGeneration'        => null, // 'signed' | 'public' <- default depends on public
+
+            'defaultUrlGenerationOptions' => [
+                'download'  => false,
+                'transform' => [],
+            ],
+
+            'signedUrlExpires' => 60*60*24, // 1 day <- default to 1 hour (3600)
         ],
 
     ],
