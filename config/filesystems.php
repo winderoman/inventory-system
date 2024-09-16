@@ -56,6 +56,21 @@ return [
             'throw' => false,
         ],
 
+        'sb' => [
+            'driver' => 's3',
+            'key' => env('SB_ACCESS_KEY_ID'),
+            'secret' => env('SB_SECRET_ACCESS_KEY'),
+            'region' => env('SB_DEFAULT_REGION'),
+            'bucket' => env('SB_BUCKET'),
+            'url' => env('SB_URL'),
+            'endpoint' => env('SB_ENDPOINT'),
+            'directory' => env('SB_DIRECTORY'),
+            'use_path_style_endpoint' => env('SB_USE_PATH_STYLE_ENDPOINT', true),
+            'throw' => false,
+            'bucket_endpoint'=> true,
+            'visibility'=> 'public',
+        ],
+
     ],
 
     /*

@@ -2,17 +2,21 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\ProductType;
 use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Models\Product;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Str;
 
 class ProductResource extends Resource
 {
@@ -27,6 +31,28 @@ class ProductResource extends Resource
     // override default 50 records limit to optimise performance
     protected static int $globalSearchResultsLimit = 10;
 
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'sku', 'description'];
+    }
+
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {   // customise the global search result details
+        return [
+            'brand' => $record->brand->name,
+        ];
+    }
+
+    public static function getGlobalSearchEloquentQuery(): Builder
+    {// REDUCE EL NUMERO DE CONSULTAS
+        return parent::getGlobalSearchEloquentQuery()->with(['brand']);
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -37,55 +63,96 @@ class ProductResource extends Resource
                 Forms\Components\Section::make()->schema([
                     Forms\Components\TextInput::make('name')
                         ->required()
+                        ->autofocus()
+                        ->live(onBlur:true)
+                        ->afterStateUpdated(function (Set $set, ?string $state) {
+                            $set('slug',Str::slug($state));
+                        })
+                        ->unique(ignoreRecord:true)
                         ->maxLength(255),
                     Forms\Components\TextInput::make('slug')
                         ->disabled()
                         ->required()
+                        ->unique(ignoreRecord:true)
+                        ->dehydrated()
                         ->maxLength(255),
                     Forms\Components\MarkdownEditor::make('description')
                         ->columnSpanFull(),
+                ])->columns(2),
 
-
-                        Forms\Components\TextInput::make('sku')
-                    ->label('SKU')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\FileUpload::make('image_url')
-                    ->image(),
-
-                Forms\Components\TextInput::make('quantity')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                Forms\Components\TextInput::make('price')
-                    ->required()
-                    ->numeric()
-                    ->prefix('$'),
-
-                Forms\Components\Toggle::make('is_featured')
-                    ->required(),
-                Forms\Components\TextInput::make('type')
-                    ->required()
-                    ->maxLength(255)
-                    ->default('deliverable'),
-                ])->columns(2)
+                Forms\Components\Section::make('Pricing & Inventory')->schema([
+                    Forms\Components\TextInput::make('sku')
+                        ->label('SKU (Stock Keeping Unit)')
+                        ->unique(Product::class, 'sku', ignoreRecord: true)
+                        ->required()
+                        ->maxLength(255),
+                    Forms\Components\TextInput::make('price')
+                        ->required()
+                        ->numeric()
+                        ->prefix('$'),
+                    Forms\Components\TextInput::make('quantity')
+                        ->required()
+                        ->numeric()
+                        ->minValue(1)
+                        ->maxValue(100)
+                        ->default(1),
+                    Forms\Components\Select::make('type')
+                        ->options(ProductType::options())
+                        ->native(false),
+                ])->columns(2),
             ]),
 
             Forms\Components\Group::make()->schema([
                 Forms\Components\Section::make('Status')->schema([
                     Forms\Components\Toggle::make('is_visible')
-                        ->default(true)
-                        ->required(),
+                        ->label("Visibility")
+                        ->default(true),
+                    Forms\Components\Toggle::make('is_featured')
+                        ->label("Featured")
+                        ->default(true),
                     Forms\Components\DatePicker::make('published_at')
-                        ->label('Availability')
+                        ->label('Publish Date')
+                        ->helperText('The date the product will be available for purchase.')
                         ->default(Carbon::now()),
+                    ]),
+
+                    Forms\Components\Section::make("Image")->schema([
+                        Forms\Components\FileUpload::make('image_url')
+                            ->disk('sb')
+                            ->directory(config('filesystems.disks.sb.'))
+                            ->image()
+                            ->imageEditor()
+                            ->storeFileNamesIn('original_image_name')
+                            ->imageCropAspectRatio(null)
+                            ->required(),
+                    ])->collapsible(),
+
                     Forms\Components\Section::make('Associations')->schema([
                         Forms\Components\Select::make('brand_id')
                             ->relationship('brand', 'name')
                             ->native(false)
-                            ->required(),
+                            ->required()
+                            ->createOptionForm([
+                                Forms\Components\TextInput::make('name')
+                                    ->required()
+                                    ->live(onBlur:true)
+                                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))
+                                    ->maxLength(255)
+                                    ->unique(ignoreRecord: true),
+                                Forms\Components\TextInput::make('slug')
+                                    ->required()
+                                    ->disabled()
+                                    ->unique(ignoreRecord: true)
+                                    ->dehydrated()
+                                    ->maxLength(255),
+                            ]),
+                        Forms\Components\Select::make('categories')
+                            ->relationship('categories','name')
+                            ->required()
+                            ->preload()
+                            ->multiple(),
                     ])
-                ])->columns(1)
+
             ]),
 
             // Forms\Components\Group::make()->schema([
