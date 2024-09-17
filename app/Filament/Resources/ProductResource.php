@@ -118,11 +118,11 @@ class ProductResource extends Resource
 
                     Forms\Components\Section::make("Image")->schema([
                         Forms\Components\FileUpload::make('image_url')
-                            ->disk('supabase')
-                            ->directory('images')
+                            ->disk('do')
+                            ->directory('productImg/' . config('filesystems.disks.do.directory_env'))
                             ->image()
+                            ->storeFileNamesIn('original_image_name')
                             ->imageEditor()
-                            ->visibility('public')
                             ->imageCropAspectRatio(null)
                             ->required(),
                     ])->collapsible(),
