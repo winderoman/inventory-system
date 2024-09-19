@@ -28,10 +28,17 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->profile()
+            // ->registration()
+            // ->passwordReset()
+            // ->emailVerification()
             ->colors([
                 'primary' => Color::Purple,
                 'success' => Color::Emerald,
             ])
+            ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
+            ->sidebarCollapsibleOnDesktop() // collapse with icons
+            // ->sidebarFullyCollapsibleOnDesktop() // full collapse without icons
+            ->font('Poppins')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
