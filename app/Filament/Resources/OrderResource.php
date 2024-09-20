@@ -27,14 +27,13 @@ class OrderResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::where('status', '=', 'processing')->count();
+        return static::getModel()::processing()->count();
     }
 
     public static function getNavigationBadgeColor(): ?string
     {
-        return static::getModel()::where('status', '=', 'processing')->count() > 10
-            ? 'warning'
-            : 'primary';
+        $count = (int) static::getNavigationBadge();
+        return $count > 10 ? 'warning' : 'success';
     }
 
 
