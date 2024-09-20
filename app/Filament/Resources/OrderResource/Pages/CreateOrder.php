@@ -49,8 +49,10 @@ class CreateOrder extends CreateRecord
         Notification::make()
             ->success()
             ->title('Order successfully registered')
-            ->persistent()
             ->send();
+
+        $this->redirect($this->getRedirectUrl());
+        $this->halt();
     }
 
 }
