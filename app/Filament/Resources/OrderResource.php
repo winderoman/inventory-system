@@ -54,7 +54,29 @@ class OrderResource extends Resource
                             ->preload()
                             ->native(false)
                             ->searchable()
-                            ->required(),
+                            ->required()
+                            ->createOptionForm([
+                                Forms\Components\TextInput::make('name')
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('email')
+                                    ->unique(ignoreRecord:true)
+                                    ->prefixIcon('heroicon-m-envelope')
+                                    ->email()
+                                    ->label('Email Address')
+                                    ->required()
+                                    ->maxLength(160),
+                                Forms\Components\TextInput::make('phone')
+                                    ->prefixIcon('heroicon-m-phone')
+                                    ->label('Phone Number')
+                                    ->unique(ignoreRecord:true)
+                                    ->tel()
+                                    ->numeric()
+                                    ->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/')
+                                    ->required()
+                                    ->maxLength(50),
+                                    
+                            ]),
                         Forms\Components\TextInput::make('shipping_price')
                             ->label('Shipping Cost')
                             ->required()

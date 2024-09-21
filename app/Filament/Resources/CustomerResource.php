@@ -27,8 +27,8 @@ class CustomerResource extends Resource
             ->schema([
                 Forms\Components\Section::make()->schema([
                     Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
+                        ->required()
+                        ->maxLength(255),
                     Forms\Components\TextInput::make('email')
                         ->unique(ignoreRecord:true)
                         ->prefixIcon('heroicon-m-envelope')
