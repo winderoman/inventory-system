@@ -66,7 +66,7 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([
                 \Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin::make(),
                 \pxlrbt\FilamentSpotlight\SpotlightPlugin::make()
-            ]);
+            ])->databaseNotifications();
             // ->navigationGroups([ // order of groups
             //     'Shop',
             //     'Roles and Permissions',
