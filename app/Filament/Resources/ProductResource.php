@@ -118,8 +118,8 @@ class ProductResource extends Resource
 
                     Forms\Components\Section::make("Image")->schema([
                         Forms\Components\FileUpload::make('image_url')
-                            ->disk('do')
-                            ->directory('productImg/' . config('filesystems.disks.do.directory_env'))
+                            // ->disk('do')
+                            // ->directory('productImg/' . config('filesystems.disks.do.directory_env'))
                             ->image()
                             ->storeFileNamesIn('original_image_name')
                             ->imageEditor()
@@ -179,8 +179,8 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('sku')
                     ->label('SKU')
                     ->searchable(),
-                Tables\Columns\ImageColumn::make('image_url')
-                    ->disk('do'),
+                Tables\Columns\ImageColumn::make('image_url'),
+                    // ->disk('do'),
                 Tables\Columns\TextColumn::make('quantity')
                     ->numeric()
                     ->sortable(),

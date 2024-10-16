@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('FILESYSTEM_DISK', 'sb'),
+    'default' => env('FILESYSTEM_DISK', 'local'),
 
     /*
     |--------------------------------------------------------------------------
@@ -56,20 +56,20 @@ return [
             'throw' => false,
         ],
 
-        'do' => [
-            'driver' => 's3',
-            'key' => env('DO_ACCESS_KEY_ID'),
-            'secret' => env('DO_SECRET_ACCESS_KEY'),
-            'region' => env('DO_DEFAULT_REGION'),
-            'bucket' => env('DO_BUCKET'),
-            'url' => env('DO_URL'),
-            'endpoint' => env('DO_ENDPOINT'),
-            'directory_env' => env('DO_DIRECTORY'),
-            'use_path_style_endpoint' => env('DO_USE_PATH_STYLE_ENDPOINT', false),
-            'throw' => false,
-            'bucket_endpoint' => true,
-            'visiblity' => 'public',
-        ],
+        // 'do' => [
+        //     'driver' => 's3',
+        //     'key' => env('DO_ACCESS_KEY_ID'),
+        //     'secret' => env('DO_SECRET_ACCESS_KEY'),
+        //     'region' => env('DO_DEFAULT_REGION'),
+        //     'bucket' => env('DO_BUCKET'),
+        //     'url' => env('DO_URL'),
+        //     'endpoint' => env('DO_ENDPOINT'),
+        //     'directory_env' => env('DO_DIRECTORY'),
+        //     'use_path_style_endpoint' => env('DO_USE_PATH_STYLE_ENDPOINT', false),
+        //     'throw' => false,
+        //     'bucket_endpoint' => true,
+        //     'visiblity' => 'public',
+        // ],
 
 
 

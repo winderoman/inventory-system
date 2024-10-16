@@ -67,6 +67,9 @@ class AdminPanelProvider extends PanelProvider
                 \Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin::make(),
                 \pxlrbt\FilamentSpotlight\SpotlightPlugin::make()
             ])->databaseNotifications();
+            // ->scripts([
+            //     'public/js/voice-search.js',
+            // ]);
             // ->navigationGroups([ // order of groups
             //     'Shop',
             //     'Roles and Permissions',
